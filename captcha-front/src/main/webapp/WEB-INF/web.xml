@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+	<display-name>captcha-front</display-name>
+	<context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>captcha-front.root</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>classpath:log4j.properties</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:spring/applicationContext-captcha-front-beans.xml</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+	</listener>
+
+	<listener>
+		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+	</listener>
+
+	<listener>
+		<description>Used to initialize Spring context and set SpringBeanProxy.</description>
+		<listener-class>com.lvmama.comm.spring.SuperContextLoaderListener</listener-class>
+	</listener>
+
+	<filter>
+		<filter-name>ThreadFiler</filter-name>
+		<filter-class>com.lvmama.filter.ThreadFilter</filter-class>
+	</filter>
+
+
+	<!-- Filter -->
+	<!-- Character Encoding filter -->
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	
+	<!-- Cat链路监控filter -->
+	<filter>
+        <filter-name>cat-filter</filter-name>
+        <filter-class>com.dianping.cat.servlet.CatFilter</filter-class>
+    </filter>
+    
+	<!-- default filter -->
+	<filter>
+		<filter-name>defaultFilter</filter-name>
+		<filter-class>com.lvmama.comm.filter.DefaultFilter</filter-class>
+	</filter>
+
+	<filter>
+		<filter-name>xssSqlFilter</filter-name>
+		<filter-class>com.lvmama.comm.filter.XssSqlFilter</filter-class>
+	</filter>
+
+	<filter>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+		<init-param>
+			<param-name>logLevel</param-name>
+			<param-value>ERROR</param-value>
+		</init-param>
+	</filter>
+	<!-- Filter -->
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>ThreadFiler</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>defaultFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>xssSqlFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+    <filter-mapping>
+        <filter-name>cat-filter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+    
+	<servlet>
+		<servlet-name>SimpleCaptchaServlet</servlet-name>
+		<servlet-class>com.lvmama.captcha.servlet.SimpleCaptchaServlet</servlet-class>
+		<init-param>
+			<param-name>kaptcha.border</param-name>
+			<param-value>no</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.border.color</param-name>
+			<param-value>105,179,90</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.textproducer.font.color</param-name>
+			<param-value>255,0,102</param-value>
+		</init-param>
+		<!-- 干扰线的颜色 -->
+		<init-param>
+			<param-name>kaptcha.noise.color</param-name>
+			<param-value>255,0,102</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.image.width</param-name>
+			<param-value>80</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.image.height</param-name>
+			<param-value>30</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.textproducer.font.size</param-name>
+			<param-value>23</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.textproducer.char.length</param-name>
+			<param-value>4</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.textproducer.font.names</param-name>
+			<param-value>Arial,Courier</param-value>
+		</init-param>
+
+		<init-param>
+			<param-name>kaptcha.textproducer.char.string</param-name>
+			<!--<param-value>ad23578nmwxAEFYNMWX</param-value> -->
+			<param-value>0123456789</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.word.impl</param-name>
+			<param-value>com.lvmama.captcha.utils.LVWordRenderer</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.noise.impl</param-name>
+			<param-value>com.lvmama.captcha.utils.LVNoise</param-value>
+			<!-- <param-value>com.google.code.kaptcha.impl.NoNoise</param-value> -->
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.obscurificator.impl</param-name>
+			<param-value>com.lvmama.captcha.utils.KaptchaGimpy</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.background.clear.from</param-name>
+			<param-value>white</param-value>
+		</init-param>
+
+		<init-param>
+			<param-name>kaptcha.background.clear.to</param-name>
+			<param-value>white</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<servlet-name>PreviewCaptchaServlet</servlet-name>
+		<servlet-class>com.lvmama.captcha.servlet.PreviewCaptchaServlet</servlet-class>
+		<init-param>
+			<param-name>kaptcha.border</param-name>
+			<param-value>no</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.border.color</param-name>
+			<param-value>105,179,90</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.textproducer.font.color</param-name>
+			<param-value>255,0,102</param-value>
+		</init-param>
+		<!-- 干扰线的颜色 -->
+		<init-param>
+			<param-name>kaptcha.noise.color</param-name>
+			<param-value>255,0,102</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.image.width</param-name>
+			<param-value>80</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.image.height</param-name>
+			<param-value>30</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.textproducer.font.size</param-name>
+			<param-value>23</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.textproducer.char.length</param-name>
+			<param-value>4</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.textproducer.font.names</param-name>
+			<param-value>Arial,Courier</param-value>
+		</init-param>
+
+		<init-param>
+			<param-name>kaptcha.textproducer.char.string</param-name>
+			<!--<param-value>ad23578nmwxAEFYNMWX</param-value> -->
+			<param-value>0123456789</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.word.impl</param-name>
+			<param-value>com.lvmama.captcha.utils.LVWordRenderer</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.noise.impl</param-name>
+			<param-value>com.lvmama.captcha.utils.LVNoise</param-value>
+			<!-- <param-value>com.google.code.kaptcha.impl.NoNoise</param-value> -->
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.obscurificator.impl</param-name>
+			<param-value>com.lvmama.captcha.utils.KaptchaGimpy</param-value>
+		</init-param>
+		<init-param>
+			<param-name>kaptcha.background.clear.from</param-name>
+			<param-value>white</param-value>
+		</init-param>
+
+		<init-param>
+			<param-name>kaptcha.background.clear.to</param-name>
+			<param-value>white</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<servlet-name>FrontCheckCaptchaServlet</servlet-name>
+		<servlet-class>com.lvmama.captcha.servlet.FrontCheckCaptchaServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>BackCheckCaptchaServlet</servlet-name>
+		<servlet-class>com.lvmama.captcha.servlet.BackCheckCaptchaServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SimpleCaptchaServlet</servlet-name>
+		<url-pattern>/simpleCaptcha</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>PreviewCaptchaServlet</servlet-name>
+		<url-pattern>/previewCaptcha</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>FrontCheckCaptchaServlet</servlet-name>
+		<url-pattern>/frontCheck</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>BackCheckCaptchaServlet</servlet-name>
+		<url-pattern>/backCheck</url-pattern>
+	</servlet-mapping>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/404.jsp</location>
+		
+	</error-page>
+	<error-page>
+		<error-code>400</error-code>
+		<location>/404.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/404.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/404.jsp</location>
+	</error-page>
+
+</web-app>

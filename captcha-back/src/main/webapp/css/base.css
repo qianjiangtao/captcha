@@ -1,0 +1,10 @@
+.notnull {
+  font-family:Arial;font-size:13px;font-weight:normal;font-style:normal;text-decoration:none;color:#FF0000;
+}
+
+.error{
+	color:red;
+	margin:0px;
+	padding:0px;
+	display:inline;
+}
