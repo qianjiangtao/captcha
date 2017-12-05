@@ -1,2 +1,0 @@
-/nsso/tuiguang/QQCbRedirect.do
-/nsso/union/callback.do
