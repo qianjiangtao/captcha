@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lvmama.captcha.dao.RiskscoreSecurelevel" >
+
+  <resultMap id="BaseResultMap" type="com.lvmama.captcha.model.RiskscoreSecurelevel" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="business_code" property="businessCode" jdbcType="VARCHAR" />
+    <result column="secure_level" property="secureLevel" jdbcType="VARCHAR" />
+    <result column="from_score" property="fromScore" jdbcType="INTEGER" />
+    <result column="to_score" property="toScore" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapVo" type="com.lvmama.captcha.vo.RiskscoreSecurelevelVo" extends="BaseResultMap">
+    <result property="businessCodeDesc" column="code_desc"/>
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, business_code, secure_level, from_score, to_score, create_time, update_time
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from riskscore_securelevel
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="decideById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from riskscore_securelevel
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectCountByCondition" resultType="java.lang.Long" parameterType="java.util.Map">
+    SELECT COUNT(riskscore_securelevel.id)
+    FROM riskscore_securelevel
+    <where>
+      <if test="businessCode != null" >
+        business_code = #{businessCode,jdbcType=VARCHAR}
+      </if>
+      <if test="secureLevel != null" >
+        AND secure_level = #{secureLevel,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectIdByCondition" resultType="java.lang.Long" parameterType="java.util.Map">
+    SELECT riskscore_securelevel.id
+    FROM riskscore_securelevel
+    <where>
+      <if test="businessCode != null" >
+        business_code = #{businessCode,jdbcType=VARCHAR}
+      </if>
+      <if test="secureLevel != null" >
+        AND secure_level = #{secureLevel,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+
+  <!--根据id查询风控分-->
+  <select id="selectRiskscoreSecurelevelById" resultMap="BaseResultMapVo" parameterType="java.lang.Long">
+    SELECT
+    <include refid="Base_Column_List" />,(SELECT B1.code_desc
+    FROM business_type B1
+    WHERE B1.code=R1.business_code
+    ) code_desc
+    FROM riskscore_securelevel R1
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <!--根据条件查询符合条件的风控分-->
+  <select id="selectRiskscoreSecurelevelByCondition" resultMap="BaseResultMapVo" parameterType="java.util.Map">
+    SELECT
+    <include refid="Base_Column_List" />,(SELECT B1.code_desc
+    FROM business_type B1
+    WHERE B1.code=R1.business_code
+    ) code_desc
+    FROM riskscore_securelevel R1
+    <where>
+      <if test="businessCode != null" >
+        business_code = #{businessCode,jdbcType=VARCHAR}
+      </if>
+      <if test="secureLevel != null" >
+        AND secure_level = #{secureLevel,jdbcType=VARCHAR}
+      </if>
+    </where>
+    ORDER BY R1.id DESC
+    <if test="startRow != null">
+      LIMIT #{startRow},#{pageSize}
+    </if>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from riskscore_securelevel
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" parameterType="com.lvmama.captcha.model.RiskscoreSecurelevel" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into riskscore_securelevel (business_code, secure_level, from_score,
+    to_score, create_time, update_time
+    )
+    values (#{businessCode,jdbcType=VARCHAR}, #{secureLevel,jdbcType=VARCHAR}, #{fromScore,jdbcType=INTEGER},
+    #{toScore,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+    )
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.lvmama.captcha.model.RiskscoreSecurelevel" >
+    update riskscore_securelevel
+    <set >
+      <if test="businessCode != null" >
+        business_code = #{businessCode,jdbcType=VARCHAR},
+      </if>
+      <if test="secureLevel != null" >
+        secure_level = #{secureLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="fromScore != null" >
+        from_score = #{fromScore,jdbcType=INTEGER},
+      </if>
+      <if test="toScore != null" >
+        to_score = #{toScore,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+
+
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.lvmama.captcha.model.RiskscoreSecurelevel" >
+    update riskscore_securelevel
+    set business_code = #{businessCode,jdbcType=VARCHAR},
+      secure_level = #{secureLevel,jdbcType=VARCHAR},
+      from_score = #{fromScore,jdbcType=INTEGER},
+      to_score = #{toScore,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateByBusinessCodeSelective" parameterType="com.lvmama.captcha.model.RiskscoreSecurelevel" >
+    update riskscore_securelevel
+    <set >
+      <if test="fromScore != null" >
+        from_score = #{fromScore,jdbcType=INTEGER},
+      </if>
+      <if test="toScore != null" >
+        to_score = #{toScore,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where business_code = #{businessCode,jdbcType=VARCHAR}
+  </update>
+  <select id="queryRiskscoreSecurelevelCode" resultType="com.lvmama.captcha.dto.RiskscoreSecurelevelDTO" parameterType="java.lang.String" >
+    select business_code AS businessCode,secure_level as secureLevel,from_score AS fromScore,to_score AS toScore
+    from riskscore_securelevel
+    where business_code = #{businessCode}
+  </select>
+</mapper>
